@@ -78,9 +78,8 @@ def nacteni_souboru(nazev):
         for i in csv_reader:
             new_list.append(i)
 
-    # delame z nej matice
     mat = np.array(new_list)
-    # zjistujeme mnozstvi mest
+
     M = len(mat[1])
 
     return mat, M
