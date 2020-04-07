@@ -1,25 +1,25 @@
-from ruzne_funkci import create_generation
-from ruzne_funkci import crossingover
-from ruzne_funkci import mutation
+import ruzne_funkci as rf
 
-#
-#tady my prý zpracujeme tabulku dat MxM, a zjistujeme mnozstvi mest M a vzdalenosti mezi nimi
-#
 
-M = 5 #množstvi měst (napriklad)
+##[matice, M] = rf.nacteni_souboru(input("Bez uvazovok napiste nazev souboru: "))
+[matice, M] = rf.nacteni_souboru("data_vzdalenosti.csv")
+mnozstvi_jedincu = 4#int(input("Zadejte mnozstvi potřebných jedincu v generace: "))
+start_city = 1#int(input("Zadejte cislo zacatku cesty: "))
 
-mnozstvi_jedincu = int(input("Zadejte mnozstvi potřebných jedincu v generace: "))
-start_city = int(input("Zadejte cislo zacatku cesty: "))
+generace = rf.create_generation(M, mnozstvi_jedincu,start_city) # vysl = [[4, 2, 3, 6, 5, 1], [4, 6, 2, 1, 3, 5], [4, 1, 2, 6, 5, 3], [4, 3, 1, 2, 6, 5]]
+kvality = rf.urceni_kvality(generace, matice)
 
-cisla = list() #cisla je seznam cisel jdoucich od 1 do M, ktery budeme vyuzivat ve vytvoreni generace a jedincu tam nachazeicich
-for i in range(1, M + 1):
-    cisla.append(i)
+print(kvality)
+print(generace)
+# new_jed = rf.crossingover([1,2,5,4,3]) #testovani fungovani funkce krizeni
+# print(new_jed)
+# new_jed = rf.mutation([1,2,5,4,3]) #testovani fungovani funkce mutace
+# print(new_jed)
+
+
 
 def main():
 
-    create_generation(cisla, mnozstvi_jedincu, start_city)
-    #crossingover([1,4,2,3,5])
-    #mutation([1,2,3,4,5])
 
 if __name__ == "__main__":
     main()
