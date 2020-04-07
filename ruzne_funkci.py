@@ -67,7 +67,11 @@ def mutation(jedinec):
 
 
 def nacteni_souboru(nazev):
-    # nacteni csv souboru s daty
+    """
+    nacteni csv souboru s daty
+    :param nazev: bez uvazovok nazev souboru, ktery lezi ve stejne slozce se hlavnim skriptem
+    :return:
+    """
     new_list = []
     with open(nazev, newline="") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=";", quotechar="|")
@@ -83,7 +87,12 @@ def nacteni_souboru(nazev):
 
 
 def urceni_kvality(generace, mat):
-
+    """
+    vystupem je seznam delek cest jednotlivych jedincu, indexy jsou shode, prvni v seznamu odpovidaji prvnimu v generace
+    :param generace: seznam s jedinci
+    :param mat: matice, zpracovana data
+    :return:
+    """
     kvality = []
     for j in generace:
         kval = 0
