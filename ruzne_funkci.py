@@ -5,12 +5,12 @@ import numpy as np
 
 def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
     """
-    vytvari seznam obsahujici jedincy,predstavujici sebou jednotlive seznamy s nahodne promichanymi cisly, se stejnym zacatkem.
-    :param sezn_cisel: seznam cisel od 1 do M(mnozstvi mest)
-    :param mnozstvi_jedincu: zadejme kolik jedincu budeme chtit v generace, ktera pak se bude menit ale mnozstvi jedincu ne.
-    :return:
+    :param pocet_mest: Pocet mest v matici
+    :param mnozstvi_jedincu: Kolik jedincu chceme
+    :param start_city: Zacatek cesty
+    :return:  Seznam obsahujici jedincy,predstavujici sebou jednotlive seznamy s nahodne promichanymi cisly
     """
-    cisla = list()  # cisla je seznam cisel jdoucich od 1 do M, ktery budeme vyuzivat ve vytvoreni generace a jedincu tam nachazeicich
+    cisla = list()  # cisla je seznam cisel jdoucich od 1 do M
     for i in range(1, pocet_mest + 1):
         cisla.append(i)
 
@@ -27,9 +27,9 @@ def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
 
 def crossingover(jedinec):
     """
-    nahodne promichani casti retezce
-    :param jedinec: posloupnost cisel
-    :return:
+    Nahodne promichani casti retezce
+    :param jedinec: Posloupnost cisel
+    :return: Zkrosingovany jedinec
     """
 
     index_1 = randint(1, len(jedinec)) #urcujeme indexy odkud a dokud budeme michat
@@ -53,9 +53,9 @@ def crossingover(jedinec):
 
 def mutation(jedinec):
     """
-    nahodne prohozeni dvou cisel v posloupnosti
-    :param jedinec: posloupnost cisel
-    :return:
+    Nahodne prohozeni dvou cisel v posloupnosti
+    :param jedinec: Posloupnost cisel
+    :return: Zmutovany jedinec
     """
     index_1 = randint(1, len(jedinec) - 1)
     index_2 = randint(1, len(jedinec) - 1)
@@ -68,9 +68,9 @@ def mutation(jedinec):
 
 def nacteni_souboru(nazev):
     """
-    nacteni csv souboru s daty
-    :param nazev: bez uvazovok nazev souboru, ktery lezi ve stejne slozce se hlavnim skriptem
-    :return:
+    Nacteni csv souboru s daty
+    :param nazev: Bez uvazovok nazev souboru, ktery lezi ve stejne slozce se hlavnim skriptem
+    :return: Matice, pocet mest
     """
     new_list = []
     with open(nazev, newline="") as csv_file:
@@ -88,10 +88,9 @@ def nacteni_souboru(nazev):
 
 def urceni_kvality(generace, mat):
     """
-    vystupem je seznam delek cest jednotlivych jedincu, indexy jsou shode, prvni v seznamu odpovidaji prvnimu v generace
-    :param generace: seznam s jedinci
-    :param mat: matice, zpracovana data
-    :return:
+    :param generace: Seznam s jedinci
+    :param mat: Matice, zpracovana data
+    :return: Seznam delek cest jednotlivych jedincu, indexy jsou shode, prvni v seznamu odpovidaji prvnimu v generace
     """
     kvality = []
     for j in generace:
