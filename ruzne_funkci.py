@@ -5,12 +5,13 @@ import numpy as np
 
 def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
     """
-    Vytvoreni pocatecni generace(populace)
-    :param pocet_mest: Pocet mest v matici
-    :param mnozstvi_jedincu: Kolik jedincu chceme
-    :param start_city: Zacatek cesty
-    :return:  Seznam obsahujici jedincy,predstavujici sebou jednotlive seznamy s nahodne promichanymi cisly
+    Vytvoření počáteční generace(populace)
+    :param pocet_mest: Počet měst v matici
+    :param mnozstvi_jedincu: Kolik jedinců chceme
+    :param start_city: Začátek cesty
+    :return:  Seznam obsahující jedincy,představující sebou jednotlivé seznamy s náhodně promichanými čísly
     """
+
     cisla = list()    # cisla je seznam cisel jdoucich od 1 do M
     for i in range(1, pocet_mest + 1):
         cisla.append(i)
@@ -18,23 +19,28 @@ def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
     generace = []
 
     for i in range(mnozstvi_jedincu):
-        generace.append(rnd.sample(cisla, len(cisla)))
-        generace[i].remove(start_city)
-        generace[i].insert(0, start_city)
+        generace.append(rnd.sample(cisla, len(cisla)))    # nahodne promichame cisla a dame do seznamu
+        generace[i].remove(start_city)     # delece pocatku cesty
+        generace[i].insert(0, start_city)    # pridame zacatek cesty na prvni
 
     return generace
 
 
-def crossingover(jedinec):
+def crossingover(jedinec):     # [1,2,4,6,3,5]
     """
-    Nahodne promichani casti retezce
+    Náhodně promíchání části řetezce
     :param jedinec: Posloupnost cisel
     :return: Zkrosingovany jedinec
+
+    Dodat/rozšířit:
+    -Pro celou generaci, ted' jenom pro jednoho.
+    -Vstupem je taky pravděpodobnosti prošle do další generace.
+    -Pokud došlo ke křížení u jedincu, on se přída do další generace. A co so starým? Zmízí se nebo se přidá taky?
     """
-    index_1 = rnd.randint(1, len(jedinec))    # urcujeme indexy odkud a dokud budeme michat
+    index_1 = rnd.randint(1, len(jedinec))    # urcujeme indexy odkud a dokud budeme michat, do pocatecniho mesta nezasahujeme (neni smysl)
     index_2 = rnd.randint(1, len(jedinec))
 
-    while index_1 == index_2:    # aby to nebylo samotne cislo, potrebujeme retezec
+    while index_1 == index_2:    # aby to nebylo stejne cislo, potrebujeme retezec
         index_1 = rnd.randint(1, len(jedinec))
         index_2 = rnd.randint(1, len(jedinec))
 
@@ -49,9 +55,13 @@ def crossingover(jedinec):
     return new_jedinec
 
 
-def mutation(jedinec):
+def mutation(jedinec):    # [1,2,4,6,3,5]
     """
-    Nahodne prohozeni dvou cisel v posloupnosti
+    Nahodne prohozeni dvou cisel v posloupnosti jedincu.
+    Dodat/rozšířit:
+    -Pro celou generaci, ted' jenom pro jednoho.
+    -Vstupem je taky pravděpodobnosti prošle do další generace.
+    -Pokud došlo k mutaci u jedincu, on se přída do další generace, a co so starým? Zmízí nebo se přidá taky?
     :param jedinec: Posloupnost cisel
     :return: Zmutovany jedinec
     """
@@ -69,8 +79,14 @@ def mutation(jedinec):
 
 def file_read():
     """
-    Nacteni csv souboru s daty, overovani spravneho formatu, a musime dodat kontrolu zapornych hodnot ve datach
-    :return: Matice, pocet mest
+    Nacteni csv souboru s daty, overovani spravneho formatu, vytvoreni matice(array).
+    a musime dodat:
+
+    :return: Matice hodnoceni delek cest mezi mesty, pocet mest
+    Dodat/rozšířit:
+    -Kontrolu záporných hodnot ve datach
+    -Načtení ostatních formátu než jenom csv (knihovna xlrd)
+    -Jaké vůbec další formáty potřebujeme
     """
     formaty = ["csv", "xls", "xlsx"]
     nazev = "data_vzdalenosti.csv"
@@ -95,25 +111,25 @@ def file_read():
     mat = np.array(new_list)
     pocet_mest = len(mat[0])
 
-    # if mat.any() < 0:
+    # if mat_hod.any() < 0:
         # print("Data nesmi obsahovat zaporna cisla")
 
     return mat, pocet_mest
 
 
-def quality(generace, mat):
+def quality(generace, mat_hod):
     """
-    Urcuje kvalitu generace(delku cest)
+    Určuje kvalitu generace(délku cest)
     :param generace: Seznam s jedinci
-    :param mat: Matice, zpracovana data
-    :return: Seznam delek cest jednotlivych jedincu, indexy jsou shode, prvni v seznamu odpovidaji prvnimu v generace
+    :param mat_hod: Matice, zpracovana data
+    :return: Seznam délek cest jednotlivých jedinců, indexy jsou shodé, první v seznamu odpovidá prvnímu v generace
     """
     kvality = []
     for j in generace:
         kval = 0
         for i in range(len(j) - 1):
-            kval += int(mat[j[i] - 1][j[i + 1] - 1])
-        kval += int(mat[j[0] - 1][j[-1] - 1])
+            kval += int(mat_hod[j[i] - 1][j[i + 1] - 1])
+        kval += int(mat_hod[j[0] - 1][j[-1] - 1])
         kvality.append(kval)
 
     return kvality
@@ -121,7 +137,8 @@ def quality(generace, mat):
 
 def qual_to_prob(kvality):
     """
-    Transformace kvalit do pravdepodobnosti, roztazene od 0 do 1.
+    Transformace kvalit(délek cest) do pravděpodobnosti pro vyhození z generace.
+    Nejkratší cesta = 0 pravdepodobnost, největší = 1.
     :param kvality:
     :return:
     """
@@ -142,28 +159,33 @@ def qual_to_prob(kvality):
     elif max_cislo < 1000000:
         pravd = arr / 1000000
 
-    probabilities_arr = pravd - min(pravd)
-    probabilities_arr = probabilities_arr / max(probabilities_arr)
-    probabilities_list = np.ndarray.tolist(probabilities_arr)
+    probabilities_arr = pravd - min(pravd)    # vycitame nejmensi
+    probabilities_arr = probabilities_arr / max(probabilities_arr)    # pak vydelime nejvetsim
+    probabilities_list = np.ndarray.tolist(probabilities_arr)    # prevadime do listu
 
     return probabilities_list
 
 
-def selection(probs, generation):
-
+def selection(probabilities, generation):
+    """
+    Na zakladě pravděpodobnosti určuje kdo projde do další generace.
+    :param probabilities:
+    :param generation:
+    :return:
+    """
     i = 0
     b = 0
-    dl = len(probs)
+    dl = len(probabilities)    # řídí cykl
 
     while b != dl:
-        var = rnd.random()
-        pom = var - probs[i]
+        var = rnd.random()    # rand float od 0 do 1
+        pom = var - probabilities[i]    # pomocná proměnná
         if pom <= 0:
-            del probs[i]
+            del probabilities[i]
             del generation[i]
             b += 1
         else:
             i += 1
             b += 1
 
-    return probs, generation
+    return probabilities, generation
