@@ -1,80 +1,5 @@
-import random as rnd
 import csv
 import numpy as np
-
-
-def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
-    """
-    Vytvoření počáteční generace(populace)
-    :param pocet_mest: Počet měst v matici
-    :param mnozstvi_jedincu: Kolik jedinců chceme
-    :param start_city: Začátek cesty
-    :return:  Seznam obsahující jedincy,představující sebou jednotlivé seznamy s náhodně promichanými čísly
-    """
-
-    cisla = list()    # cisla je seznam cisel jdoucich od 1 do M
-    for i in range(1, pocet_mest + 1):
-        cisla.append(i)
-
-    generace = []
-
-    for i in range(mnozstvi_jedincu):
-        generace.append(rnd.sample(cisla, len(cisla)))    # nahodne promichame cisla a dame do seznamu
-        generace[i].remove(start_city)     # delece pocatku cesty
-        generace[i].insert(0, start_city)    # pridame zacatek cesty na prvni
-
-    return generace
-
-
-def crossingover(jedinec):     # [1,2,4,6,3,5]
-    """
-    Náhodně promíchání části řetezce
-    :param jedinec: Posloupnost cisel
-    :return: Zkrosingovany jedinec
-
-    Dodat/rozšířit:
-    -Pro celou generaci, ted' jenom pro jednoho.
-    -Vstupem je taky pravděpodobnosti prošle do další generace.
-    -Pokud došlo ke křížení u jedincu, on se přída do další generace. A co so starým? Zmízí se nebo se přidá taky?
-    """
-    index_1 = rnd.randint(1, len(jedinec))    # urcujeme indexy odkud a dokud budeme michat, do pocatecniho mesta nezasahujeme (neni smysl)
-    index_2 = rnd.randint(1, len(jedinec))
-
-    while index_1 == index_2:    # aby to nebylo stejne cislo, potrebujeme retezec
-        index_1 = rnd.randint(1, len(jedinec))
-        index_2 = rnd.randint(1, len(jedinec))
-
-    if index_1 > index_2:
-        index_1, index_2 = index_2, index_1    # index_1 bude vzdy mensi nez index_2
-
-    new_jedinec = jedinec[:index_1]
-    michana_cast = rnd.sample(jedinec[index_1:index_2 + 1], len(jedinec[index_1:index_2 + 1]))
-    new_jedinec.extend(michana_cast)
-    new_jedinec.extend(jedinec[index_2 + 1:])
-
-    return new_jedinec
-
-
-def mutation(jedinec):    # [1,2,4,6,3,5]
-    """
-    Nahodne prohozeni dvou cisel v posloupnosti jedincu.
-    Dodat/rozšířit:
-    -Pro celou generaci, ted' jenom pro jednoho.
-    -Vstupem je taky pravděpodobnosti prošle do další generace.
-    -Pokud došlo k mutaci u jedincu, on se přída do další generace, a co so starým? Zmízí nebo se přidá taky?
-    :param jedinec: Posloupnost cisel
-    :return: Zmutovany jedinec
-    """
-    index_1 = rnd.randint(1, len(jedinec) - 1)
-    index_2 = rnd.randint(1, len(jedinec) - 1)
-
-    while index_1 == index_2:
-        index_1 = rnd.randint(1, len(jedinec) - 1)
-        index_2 = rnd.randint(1, len(jedinec) - 1)
-
-    jedinec[index_1], jedinec[index_2] = jedinec[index_2], jedinec[index_1]
-
-    return jedinec
 
 
 def file_read():
@@ -122,7 +47,7 @@ def quality(generace, mat_hod):
     Určuje kvalitu generace(délku cest)
     :param generace: Seznam s jedinci
     :param mat_hod: Matice, zpracovana data
-    :return: Seznam délek cest jednotlivých jedinců, indexy jsou shodé, první v seznamu odpovidá prvnímu v generace
+    :return: Seznam délek cest jednotlivých jedinců, první index v seznamu odpovidá prvnímu v generace
     """
     kvality = []
     for j in generace:
@@ -137,7 +62,7 @@ def quality(generace, mat_hod):
 
 def qual_to_prob(kvality):
     """
-    Transformace kvalit(délek cest) do pravděpodobnosti pro vyhození z generace.
+    Transformace kvalit(délek cest) do pravděpodobnosti pro vyhození z delka_generace.
     Nejkratší cesta = 0 pravdepodobnost, největší = 1.
     :param kvality:
     :return:
@@ -164,28 +89,3 @@ def qual_to_prob(kvality):
     probabilities_list = np.ndarray.tolist(probabilities_arr)    # prevadime do listu
 
     return probabilities_list
-
-
-def selection(probabilities, generation):
-    """
-    Na zakladě pravděpodobnosti určuje kdo projde do další generace.
-    :param probabilities:
-    :param generation:
-    :return:
-    """
-    i = 0
-    b = 0
-    dl = len(probabilities)    # řídí cykl
-
-    while b != dl:
-        var = rnd.random()    # rand float od 0 do 1
-        pom = var - probabilities[i]    # pomocná proměnná
-        if pom <= 0:
-            del probabilities[i]
-            del generation[i]
-            b += 1
-        else:
-            i += 1
-            b += 1
-
-    return probabilities, generation
