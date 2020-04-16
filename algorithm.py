@@ -22,3 +22,6 @@ print("Jejich pravděpodobnosti: ", projdene_probabilities)
 [zkrossingovana_generace, probs_arr] = bp.crossingover(projdena_generace, projdene_probabilities, mnozstvi_jedincu)
 print("S temíto pravděpodobnosti dojde ke crossoveringů: ", probs_arr)
 print("V nové generace, u některých jedinců došlo ke crossoveringů: ", zkrossingovana_generace)
+
+mutovana_generace = bp.mutation(zkrossingovana_generace)
+print("Genracia po mutacii: ", mutovana_generace)

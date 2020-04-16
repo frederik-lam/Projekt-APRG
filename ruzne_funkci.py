@@ -21,7 +21,7 @@ def file_read():
     if len(soubor) >= 2:
         file_format = soubor[-1].lower()
         if file_format not in formaty:
-            return False, print("Spatne zadany format souboru")
+            raise ValueError ("Spatne zadany format souboru")
     else:
         print("Napiste jmeno souboru s pozadovanym formatem")
         file_read()
@@ -36,8 +36,13 @@ def file_read():
     mat = np.array(new_list)
     pocet_mest = len(mat[0])
 
-    # if mat_hod.any() < 0:
-        # print("Data nesmi obsahovat zaporna cisla")
+    [m,n] = mat.shape
+    for row in range(m):
+        for column in range(n):
+            if row == column:
+                continue
+            elif int(mat[row, column]) < 0:
+                raise ValueError ("Súbor obsahje zápornú vzdialenosť na: " + str(row+1) + " riadku, " + str(column+1) + " stĺpci.")
 
     return mat, pocet_mest
 
@@ -54,7 +59,7 @@ def quality(generace, mat_hod):
         kval = 0
         for i in range(len(j) - 1):
             kval += int(mat_hod[j[i] - 1][j[i + 1] - 1])
-        kval += int(mat_hod[j[0] - 1][j[-1] - 1])
+        kval += int(mat_hod[j[0] - 1][j[-1] - 1]) # cesta z posledneho mesta do pociatocneho
         kvality.append(kval)
 
     return kvality
