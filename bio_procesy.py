@@ -1,5 +1,5 @@
 import random as rnd
-import numpy as np
+# import numpy as np
 
 
 def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
@@ -25,37 +25,77 @@ def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
     return generace
 
 
-def crossingover(generace, probs, mnozstvi_jedincu):  # [1,2,4,6,3,5]
+def selection(generation, probabilities):
+    """
+    Na zakladě pravděpodobnosti určuje kdo projde do další delka_generace.
+    :param probabilities:
+    :param generation:
+    :return selected_breeder: Jedinec, ktory bude mat sancu sa krizit
+    """
+    selected_parent = []
+    prob_of_parent = []
+    while not selected_parent:
+        var = round(rnd.random(), 4)  # rand float od 0 do 1
+        picked_individual_indx = rnd.randint(0, len(generation)-1)  # nahodne vybranie jedinca
+        if probabilities[picked_individual_indx] - var < 0:
+            selected_parent = generation[picked_individual_indx]
+            prob_of_parent = probabilities[picked_individual_indx]
+
+    return selected_parent, prob_of_parent
+
+
+def breed(parent1, parent2, chiasma):
+    """
+    Vytvorenie potomka z 2 rodicov
+    :param parent1: 1.Rodic
+    :param parent2: 2.Rodic
+    :param chiasma: miesto prekrizenia
+    :return offspring:  potomok rodicov
+    """
+    start = parent1[0:chiasma]
+    tail = [gen for gen in parent2 if gen not in start]
+    offspring = start + tail
+    return offspring
+
+
+def crossingover(generace, probs):  # [1,2,4,6,3,5]
     """
     Náhodně promíchání části řetezce
     :param generace: Seznam jedincu
     :param probs: Seznam pravděpodobnosti
-    :param mnozstvi_jedincu: Kolik jedincu musi byt v generace
     :return: Zkrosingovany jedinec
     """
-    new_generace = []
-    delka_generace = len(generace)
-    delka_jedincu = len(generace[0])
-    probs_arr = np.array(probs)
-    probs_arr = probs_arr / max(probs_arr)  # zvyrazneni prvku lisicich se od nejlepsiho(0)
+    new_generation = []
+    gen_len = len(generace)
 
-    for i in range(delka_generace):
-        if mnozstvi_jedincu > len(new_generace):
-            var = rnd.random()
-            if var - probs_arr[i] < 0:
-                index_1 = int(delka_jedincu / 2)  # od tohoto indexu
-                index_2 = delka_jedincu  # do tohoto
+    while len(new_generation) != gen_len:
+        help_gen = generace
+        help_prob = probs
+        [parent1, prob_parent1] = selection(help_gen, help_prob)  # vybratie rodicov, ktory budu vstupovat do krizenia
+        help_gen.remove(parent1)
+        help_prob.remove(prob_parent1)  # osetrenie aby nebol 2-krat vybraty ten isty rodic
+        [parent2, pprob_parent2] = selection(help_gen, help_prob)
 
-                new_jedinec = generace[i][:index_1]
-                michana_cast = rnd.sample(generace[i][index_1:index_2 + 1], len(generace[i][index_1:index_2 + 1]))
-                new_jedinec.extend(michana_cast)
-                new_generace.append(new_jedinec)  # do nove generace jde zkrossingovany jedinec
+        miesto_krizenia = rnd.randint(int(gen_len / 3), int(2 * gen_len / 3))
+        # vybratie nahodneho miesta krizenia, usudil som ze najlepsie bude ak to bude niekde medzi 1/3 a 2/3 dlzky
+
+        offspring1 = breed(parent1, parent2, miesto_krizenia)  # vytvorenie prveho potomka
+        offspring2 = breed(parent2, parent1, miesto_krizenia)  # vytvorenei druheho potomka
+
+        # Rozhodnutie ci bude do novej generacie pridany len 1 potomok alebo 2
+        if gen_len - len(new_generation) >= 2:
+            a = rnd.random()  # nahodne vybratie cisla
+            if a < 0.5:  # ak je a < 0.5 tak je vybraty iba jeden potomok, opacne su vybraty obaja
+                if a < 0.25:
+                    new_generation.append(offspring1)
+                else:
+                    new_generation.append(offspring2)
             else:
-                new_generace.append(generace[i])
+                new_generation.append(offspring1)
+                new_generation.append(offspring2)
         else:
-            break
-
-    return new_generace, probs_arr
+            new_generation.append(offspring1)
+    return new_generation
 
 
 def mutation(generace):  # [1,2,4,6,3,5]
@@ -66,35 +106,17 @@ def mutation(generace):  # [1,2,4,6,3,5]
     :param generace: Generacia jedincov, ktora bude mutovana
     :return: mutovana_generace: Generacia po mutacii
     """
-    mutovana_generace = []
-    for jedinec in generace:
+    gen_length = len(generace)
+    pocet_mutovanych_jedincov = rnd.randint(0, gen_length)  # nahodny vzber poctu mutovanych jedincov
+    indx_mutovanych_jedincov = rnd.sample(range(gen_length), pocet_mutovanych_jedincov)  # nahodny vyber jedincov u
+    # ktorych dojde k mutacii
+    mutovana_generace = generace
+    for i in indx_mutovanych_jedincov:
+        jedinec = generace[i]
+        mutovana_generace.pop(i)  # odstranenie jedinca y povodnej generacie
         delka_jed = len(jedinec)
-        [index_1, index_2] = rnd.sample(range(delka_jed),2) # nahodny vyber 2 prvkov
-        jedinec[index_1], jedinec[index_2] = jedinec[index_2], jedinec[index_1] #prehodenie danych prvkov
-        mutovana_generace.append(jedinec)
+        [index_1, index_2] = rnd.sample(range(delka_jed), 2)  # nahodny vyber 2 prvkov
+        jedinec[index_1], jedinec[index_2] = jedinec[index_2], jedinec[index_1]  # prehodenie danych prvkov
+        mutovana_generace.insert(i, jedinec)
 
     return mutovana_generace
-
-
-def selection(generation, probabilities):
-    """
-    Na zakladě pravděpodobnosti určuje kdo projde do další delka_generace.
-    :param probabilities:
-    :param generation:
-    :return:
-    """
-    i = 0
-    b = 0
-    dl = len(probabilities)  # řídí cykl
-
-    while b != dl:
-        var = rnd.random()  # rand float od 0 do 1
-        if var - probabilities[i] < 0:
-            del probabilities[i]
-            del generation[i]
-            b += 1
-        else:
-            i += 1
-            b += 1
-
-    return generation, probabilities

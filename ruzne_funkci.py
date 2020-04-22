@@ -1,5 +1,6 @@
 import csv
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def file_read():
@@ -21,7 +22,7 @@ def file_read():
     if len(soubor) >= 2:
         file_format = soubor[-1].lower()
         if file_format not in formaty:
-            raise ValueError ("Spatne zadany format souboru")
+            raise ValueError("Spatne zadany format souboru")
     else:
         print("Napiste jmeno souboru s pozadovanym formatem")
         file_read()
@@ -36,13 +37,14 @@ def file_read():
     mat = np.array(new_list)
     pocet_mest = len(mat[0])
 
-    [m,n] = mat.shape
+    [m, n] = mat.shape
     for row in range(m):
         for column in range(n):
             if row == column:
                 continue
             elif int(mat[row, column]) < 0:
-                raise ValueError ("Súbor obsahje zápornú vzdialenosť na: " + str(row+1) + " riadku, " + str(column+1) + " stĺpci.")
+                raise ValueError("Súbor obsahje zápornú vzdialenosť na: {0} riadku, {1}stĺpci.".format(str(row + 1),
+                                                                                                       str(column + 1)))
 
     return mat, pocet_mest
 
@@ -59,10 +61,11 @@ def quality(generace, mat_hod):
         kval = 0
         for i in range(len(j) - 1):
             kval += int(mat_hod[j[i] - 1][j[i + 1] - 1])
-        kval += int(mat_hod[j[0] - 1][j[-1] - 1]) # cesta z posledneho mesta do pociatocneho
+        kval += int(mat_hod[j[0] - 1][j[-1] - 1])  # cesta z posledneho mesta do pociatocneho
         kvality.append(kval)
+    best_individual = min(kvality)  # hodnota kvality najlepsieho jedinca (pre vykreslenie v grafoch)
 
-    return kvality
+    return kvality, best_individual
 
 
 def qual_to_prob(kvality):
@@ -90,7 +93,19 @@ def qual_to_prob(kvality):
         pravd = arr / 1000000
 
     probabilities_arr = pravd - min(pravd)    # vycitame nejmensi
-    probabilities_arr = probabilities_arr / max(probabilities_arr)    # pak vydelime nejvetsim
+    probabilities_arr = np.around(probabilities_arr / max(probabilities_arr), 4)    # pak vydelime nejvetsim
     probabilities_list = np.ndarray.tolist(probabilities_arr)    # prevadime do listu
 
     return probabilities_list
+
+
+def quality_plot(best_indiviuals):
+    """
+    Vykreslenie postupného zlepšovania kvality najlepších jedincov v generácii
+    :param best_indiviuals: vektor hodnot kvality najlepších jedincov
+    :return: vykreslenie grafu
+    """
+    plt.plot(best_indiviuals)
+    plt.xlabel('Počet iterací [-]')
+    plt.ylabel('Kvalita [-]')
+    plt.title('Kvalita nejlepšího jedince')
