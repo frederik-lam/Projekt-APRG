@@ -1,28 +1,46 @@
 import ruzne_funkci as rf
 import bio_procesy as bp
 
-[matice, poc_mest] = rf.file_read()
-mnozstvi_jedincu = 6#int(input("Zadejte mnozstvi potřebných jedincu v generace: "))
-start_city = 1#int(input("Zadejte cislo zacatku cesty: "))
+# [matice, poc_mest] = rf.file_read()
+# mnozstvi_jedincu = 6  # int(input("Zadejte mnozstvi potřebných jedincu v generace: "))
+# pocatecne_mesto = 1  # int(input("Zadejte cislo zacatku cesty: "))
+#
+# generace = bp.create_generation(poc_mest, mnozstvi_jedincu,
+#                                 pocatecne_mesto)  # priklad vysledku = [[1, 2, 3, 6, 5, 4], [1, 6, 2, 4, 3, 5]]...
+# print("Počateční generace: ", generace)
+#
+# [kvality, najlepsi_jedinec] = rf.quality(generace, matice)
+# print("Délky cest počatečních generaci: ", kvality)
+#
+# probabilities = rf.qual_to_prob(kvality)
+# print("Pravděpodobnost, že projdou do další generace(0 - ano, 1 - ne): ", probabilities)
+#
+# zkrossingovana_generace = bp.crossingover(generace, probabilities)
+# print("V nové generace, u některých jedinců došlo ke crossoveringů: ", zkrossingovana_generace)
+#
+# mutovana_generace = bp.mutation(zkrossingovana_generace)
+# print("Genracia po mutacii: ", mutovana_generace)
 
-generace = bp.create_generation(poc_mest, mnozstvi_jedincu,start_city) # priklad vysledku = [[1, 2, 3, 6, 5, 4], [1, 6, 2, 4, 3, 5]]...
-print("Počateční generace: ", generace)
 
-najlepsi_jedinci = []  # hodnoty najlepsich jedincov pre neskorsie vykreslenie do grafu
-[kvality, najlepsi_jedinec] = rf.quality(generace, matice)
-najlepsi_jedinci.append(najlepsi_jedinec)
-print("Délky cest počatečních generaci: ", kvality)
+def main():
+    [matrix, num_of_cities] = rf.file_read()
+    num_of_individuals = 6  # int(input("Zadejte mnozstvi potřebných jedincu v generace: "))
+    start_city = 1
+    start_generation = bp.create_generation(num_of_cities, num_of_individuals, start_city)
+    iteration_max = 20  # maximalny pocet iteracii
+    actual_iteration = 0
+    best_individuals = []  # hodnoty najlepsich jedincov pre neskorsie vykreslenie do grafu
+    generation = start_generation.copy()
 
-probabilities = rf.qual_to_prob(kvality)
-print("Pravděpodobnost, že projdou do další generace(0 - ano, 1 - ne): ", probabilities)
+    while actual_iteration != iteration_max:
+        [quality, best_score] = rf.quality(generation, matrix)
+        best_individuals.append(best_score)
+        probs = rf.qual_to_prob(quality)
+        crossed_generation = bp.crossingover(generation, probs)
+        mutated_generation = bp.mutation(crossed_generation)
+        generation = mutated_generation.copy()
+        actual_iteration += 1
+    print(best_individuals)
+    rf.quality_plot(best_individuals)
 
-# [projdena_generace, projdene_probabilities] = bp.selection(generace, probabilities)
-# print("Generace po selekci: ", projdena_generace)
-# print("Jejich pravděpodobnosti: ", projdene_probabilities)
-
-zkrossingovana_generace = bp.crossingover(generace, probabilities)
-#print("S temíto pravděpodobnosti dojde ke crossoveringů: ", probs_arr)
-print("V nové generace, u některých jedinců došlo ke crossoveringů: ", zkrossingovana_generace)
-
-mutovana_generace = bp.mutation(zkrossingovana_generace)
-print("Genracia po mutacii: ", mutovana_generace)
+main()

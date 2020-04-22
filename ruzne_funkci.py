@@ -99,13 +99,14 @@ def qual_to_prob(kvality):
     return probabilities_list
 
 
-def quality_plot(best_indiviuals):
+def quality_plot(best_individuals):
     """
     Vykreslenie postupného zlepšovania kvality najlepších jedincov v generácii
-    :param best_indiviuals: vektor hodnot kvality najlepších jedincov
+    :param best_individuals: vektor hodnot kvality najlepších jedincov
     :return: vykreslenie grafu
     """
-    plt.plot(best_indiviuals)
+    plt.plot(best_individuals)
     plt.xlabel('Počet iterací [-]')
     plt.ylabel('Kvalita [-]')
     plt.title('Kvalita nejlepšího jedince')
+    plt.show()

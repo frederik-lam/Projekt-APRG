@@ -52,7 +52,7 @@ def breed(parent1, parent2, chiasma):
     :param chiasma: miesto prekrizenia
     :return offspring:  potomok rodicov
     """
-    start = parent1[0:chiasma]
+    start = [1] + parent1[1:chiasma]  # vynechanie 0 prvku aby sa nezmenilo start city
     tail = [gen for gen in parent2 if gen not in start]
     offspring = start + tail
     return offspring
@@ -69,8 +69,8 @@ def crossingover(generace, probs):  # [1,2,4,6,3,5]
     gen_len = len(generace)
 
     while len(new_generation) != gen_len:
-        help_gen = generace
-        help_prob = probs
+        help_gen = generace.copy()  # vytvorenie pomocnej generacie
+        help_prob = probs.copy()  # vytvorenie pocnych pravdepodobnosti
         [parent1, prob_parent1] = selection(help_gen, help_prob)  # vybratie rodicov, ktory budu vstupovat do krizenia
         help_gen.remove(parent1)
         help_prob.remove(prob_parent1)  # osetrenie aby nebol 2-krat vybraty ten isty rodic
@@ -79,22 +79,14 @@ def crossingover(generace, probs):  # [1,2,4,6,3,5]
         miesto_krizenia = rnd.randint(int(gen_len / 3), int(2 * gen_len / 3))
         # vybratie nahodneho miesta krizenia, usudil som ze najlepsie bude ak to bude niekde medzi 1/3 a 2/3 dlzky
 
-        offspring1 = breed(parent1, parent2, miesto_krizenia)  # vytvorenie prveho potomka
-        offspring2 = breed(parent2, parent1, miesto_krizenia)  # vytvorenei druheho potomka
-
-        # Rozhodnutie ci bude do novej generacie pridany len 1 potomok alebo 2
-        if gen_len - len(new_generation) >= 2:
-            a = rnd.random()  # nahodne vybratie cisla
-            if a < 0.5:  # ak je a < 0.5 tak je vybraty iba jeden potomok, opacne su vybraty obaja
-                if a < 0.25:
-                    new_generation.append(offspring1)
-                else:
-                    new_generation.append(offspring2)
-            else:
-                new_generation.append(offspring1)
-                new_generation.append(offspring2)
-        else:
+        # Rozhodnutie ci bude do novej generacie pridany 1. alebo 2.potomok
+        a = rnd.random()  # nahodne vybratie cisla
+        if a < 0.5:
+            offspring1 = breed(parent1, parent2, miesto_krizenia)  # vytvorenie prveho potomka
             new_generation.append(offspring1)
+        else:
+            offspring2 = breed(parent2, parent1, miesto_krizenia)  # vytvorenei druheho potomka
+            new_generation.append(offspring2)
     return new_generation
 
 
@@ -107,16 +99,16 @@ def mutation(generace):  # [1,2,4,6,3,5]
     :return: mutovana_generace: Generacia po mutacii
     """
     gen_length = len(generace)
-    pocet_mutovanych_jedincov = rnd.randint(0, gen_length)  # nahodny vzber poctu mutovanych jedincov
-    indx_mutovanych_jedincov = rnd.sample(range(gen_length), pocet_mutovanych_jedincov)  # nahodny vyber jedincov u
+    num_of_mutauions = rnd.randint(0, gen_length)  # nahodny vyber poctu mutovanych jedincov
+    mutated_individuals = rnd.sample(range(gen_length), num_of_mutauions)  # nahodny vyber jedincov u
     # ktorych dojde k mutacii
-    mutovana_generace = generace
-    for i in indx_mutovanych_jedincov:
+    for i in mutated_individuals:
         jedinec = generace[i]
-        mutovana_generace.pop(i)  # odstranenie jedinca y povodnej generacie
+        generace.pop(i)  # odstranenie jedinca y povodnej generacie
         delka_jed = len(jedinec)
-        [index_1, index_2] = rnd.sample(range(delka_jed), 2)  # nahodny vyber 2 prvkov
+        [index_1, index_2] = rnd.sample(range(1,delka_jed), 2)  # nahodny vyber 2 prvkov, vynechanie startovacieho mesta
         jedinec[index_1], jedinec[index_2] = jedinec[index_2], jedinec[index_1]  # prehodenie danych prvkov
-        mutovana_generace.insert(i, jedinec)
+        generace.insert(i, jedinec)  # vratenie mutovaneho jedinca na povodnu poziciu
+    mutovana_generace = generace
 
     return mutovana_generace
