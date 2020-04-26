@@ -58,14 +58,16 @@ def breed(parent1, parent2, chiasma):
     return offspring
 
 
-def crossingover(generace, probs):  # [1,2,4,6,3,5]
+def crossingover(generace, probs, elite):  # [1,2,4,6,3,5]
     """
     Náhodně promíchání části řetezce
     :param generace: Seznam jedincu
     :param probs: Seznam pravděpodobnosti
+    :param elite: Najlepší jedinec z predchádzajúcej generácie
     :return: Zkrosingovany jedinec
     """
     new_generation = []
+    new_generation.append(elite)
     gen_len = len(generace)
 
     while len(new_generation) != gen_len:
@@ -99,9 +101,9 @@ def mutation(generace):  # [1,2,4,6,3,5]
     :return: mutovana_generace: Generacia po mutacii
     """
     gen_length = len(generace)
-    num_of_mutauions = rnd.randint(0, gen_length)  # nahodny vyber poctu mutovanych jedincov
-    mutated_individuals = rnd.sample(range(gen_length), num_of_mutauions)  # nahodny vyber jedincov u
-    # ktorych dojde k mutacii
+    num_of_mutauions = rnd.randint(0, gen_length-1)  # nahodny vyber poctu mutovanych jedincov
+    mutated_individuals = rnd.sample(range(1, gen_length), num_of_mutauions)  # nahodny vyber jedincov u
+    # ktorych dojde k mutacii, mimo najlepsieho jedinca, ktory je na 1. mieste
     for i in mutated_individuals:
         jedinec = generace[i]
         generace.pop(i)  # odstranenie jedinca y povodnej generacie
