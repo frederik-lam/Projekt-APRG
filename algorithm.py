@@ -25,7 +25,7 @@ import bio_procesy as bp
 def main():
     [matrix, num_of_cities] = rf.file_read()
     num_of_individuals = 6  # int(input("Zadejte mnozstvi potřebných jedincu v generace: "))
-    start_city = 1
+    start_city = 3
     generation = bp.create_generation(num_of_cities, num_of_individuals, start_city)
     iteration_max = 10  # maximalny pocet iteracii
     actual_iteration = 0

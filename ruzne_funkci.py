@@ -43,7 +43,7 @@ def file_read():
             if row == column:
                 continue
             elif int(mat[row, column]) < 0:
-                raise ValueError("Súbor obsahje zápornú vzdialenosť na: {0} riadku, {1}stĺpci.".format(str(row + 1),
+                raise ValueError("Súbor obsahuje zápornú vzdialenosť na: {0} riadku, {1}stĺpci.".format(str(row + 1),
                                                                                                        str(column + 1)))
 
     return mat, pocet_mest

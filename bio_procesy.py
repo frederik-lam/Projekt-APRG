@@ -52,7 +52,7 @@ def breed(parent1, parent2, chiasma):
     :param chiasma: miesto prekrizenia
     :return offspring:  potomok rodicov
     """
-    start = [1] + parent1[1:chiasma]  # vynechanie 0 prvku aby sa nezmenilo start city
+    start = [parent1[0]] + parent1[1:chiasma]  # vynechanie 0 prvku aby sa nezmenilo start city
     tail = [gen for gen in parent2 if gen not in start]
     offspring = start + tail
     return offspring
