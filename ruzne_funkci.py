@@ -59,13 +59,15 @@ def quality(generace, mat_hod):
     kvality = []
     for j in generace:
         kval = 0
-        for i in range(len(j) - 1):
+        for i in range(len(j)-1):
             kval += int(mat_hod[j[i] - 1][j[i + 1] - 1])
         kval += int(mat_hod[j[0] - 1][j[-1] - 1])  # cesta z posledneho mesta do pociatocneho
         kvality.append(kval)
-    best_individual = min(kvality)  # hodnota kvality najlepsieho jedinca (pre vykreslenie v grafoch)
+    best_score = min(kvality)  # hodnota kvality najlepsieho jedinca (pre vykreslenie v grafoch)
+    best_pos = kvality.index(best_score)  # najdenie indexu najlepsieho jedinca
+    best_individual = generace[best_pos]  # najlepsi jedinec z danej generacie
 
-    return kvality, best_individual
+    return kvality, best_individual, best_score
 
 
 def qual_to_prob(kvality):
