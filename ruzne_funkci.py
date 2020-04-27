@@ -15,7 +15,7 @@ def file_read():
     -Jaké vůbec další formáty potřebujeme
     """
     formaty = ["csv", "xls", "xlsx"]
-    nazev = "data_vzdalenosti1.csv"
+    nazev = "data_vzdalenosti1.csv"git revert
     # nazev = input("Napiste nazev souboru bez uvazovok: ")
     soubor = nazev.split('.')
 
@@ -43,7 +43,7 @@ def file_read():
             if row == column:
                 continue
             elif int(mat[row, column]) < 0:
-                raise ValueError("Súbor obsahje zápornú vzdialenosť na: {0} riadku, {1}stĺpci.".format(str(row + 1),
+                raise ValueError("Súbor obsahuje zápornú vzdialenosť na: {0} riadku, {1}stĺpci.".format(str(row + 1),
                                                                                                        str(column + 1)))
 
     return mat, pocet_mest
@@ -67,12 +67,12 @@ def quality(generace, mat_hod):
     best_pos = kvality.index(best_score)  # najdenie indexu najlepsieho jedinca
     best_individual = generace[best_pos]  # najlepsi jedinec z danej generacie
 
-    return kvality, best_individual, best_score
+    return best_individual, best_score
 
 
 def qual_to_prob(kvality):
     """
-    Transformace kvalit(délek cest) do pravděpodobnosti pro vyhození z generace.
+    Transformace kvalit(délek cest) do pravděpodobnosti pro vyhození z delka_generace.
     Nejkratší cesta = 0 pravdepodobnost, největší = 1.
     :param kvality:
     :return:
@@ -94,12 +94,12 @@ def qual_to_prob(kvality):
     elif max_cislo < 1000000:
         pravd = arr / 1000000
 
-    probabilities_arr = pravd - min(pravd)  # vycitame nejmensi
-    if not np.mean(arr) == min(arr):
-        probabilities_arr = probabilities_arr / max(probabilities_arr)   # pak vydelime nejvetsim
-        probabilities_arr = np.round(probabilities_arr, 4) #zaokruhlovani
+    probabilities_arr = pravd - min(pravd)    # vycitame nejmensi
+    if not np.mean(probabilities_arr) == min(probabilities_arr):
+        probabilities_arr = np.around(probabilities_arr / max(probabilities_arr), 4)    # pak vydelime nejvetsim
         probabilities_list = np.ndarray.tolist(probabilities_arr)    # prevadime do listu
-
+    else:
+        probabilities_list = probabilities_arr
 
     return probabilities_list
 
