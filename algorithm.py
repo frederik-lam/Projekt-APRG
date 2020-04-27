@@ -25,4 +25,6 @@ def main():
     print(best_scores)
     rf.quality_plot(best_scores)
 
-main()
+
+if __name__ == "__main__":
+    main()
