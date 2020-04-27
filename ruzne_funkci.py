@@ -5,17 +5,11 @@ import matplotlib.pyplot as plt
 
 def file_read():
     """
-    Nacteni csv souboru s daty, overovani spravneho formatu, vytvoreni matice(array).
-    a musime dodat:
-
+    Nacteni csv souboru s daty, overovani spravneho formatu, vytvoreni matice(array)
     :return: Matice hodnoceni delek cest mezi mesty, pocet mest
-    Dodat/rozšířit:
-    -Kontrolu záporných hodnot ve datach
-    -Načtení ostatních formátu než jenom csv (knihovna xlrd)
-    -Jaké vůbec další formáty potřebujeme
     """
     formaty = ["csv", "xls", "xlsx"]
-    nazev = "data_vzdalenosti1.csv"git revert
+    nazev = "data_vzdalenosti.csv"
     # nazev = input("Napiste nazev souboru bez uvazovok: ")
     soubor = nazev.split('.')
 
@@ -67,7 +61,7 @@ def quality(generace, mat_hod):
     best_pos = kvality.index(best_score)  # najdenie indexu najlepsieho jedinca
     best_individual = generace[best_pos]  # najlepsi jedinec z danej generacie
 
-    return best_individual, best_score
+    return kvality, best_individual, best_score
 
 
 def qual_to_prob(kvality):
@@ -97,9 +91,8 @@ def qual_to_prob(kvality):
     probabilities_arr = pravd - min(pravd)    # vycitame nejmensi
     if not np.mean(probabilities_arr) == min(probabilities_arr):
         probabilities_arr = np.around(probabilities_arr / max(probabilities_arr), 4)    # pak vydelime nejvetsim
-        probabilities_list = np.ndarray.tolist(probabilities_arr)    # prevadime do listu
-    else:
-        probabilities_list = probabilities_arr
+
+    probabilities_list = np.ndarray.tolist(probabilities_arr)
 
     return probabilities_list
 
