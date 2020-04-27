@@ -15,7 +15,7 @@ def file_read():
     -Jaké vůbec další formáty potřebujeme
     """
     formaty = ["csv", "xls", "xlsx"]
-    nazev = "data_vzdalenosti.csv"
+    nazev = "data_vzdalenosti1.csv"
     # nazev = input("Napiste nazev souboru bez uvazovok: ")
     soubor = nazev.split('.')
 
@@ -72,7 +72,7 @@ def quality(generace, mat_hod):
 
 def qual_to_prob(kvality):
     """
-    Transformace kvalit(délek cest) do pravděpodobnosti pro vyhození z delka_generace.
+    Transformace kvalit(délek cest) do pravděpodobnosti pro vyhození z generace.
     Nejkratší cesta = 0 pravdepodobnost, největší = 1.
     :param kvality:
     :return:
@@ -94,9 +94,12 @@ def qual_to_prob(kvality):
     elif max_cislo < 1000000:
         pravd = arr / 1000000
 
-    probabilities_arr = pravd - min(pravd)    # vycitame nejmensi
-    probabilities_arr = np.around(probabilities_arr / max(probabilities_arr), 4)    # pak vydelime nejvetsim
-    probabilities_list = np.ndarray.tolist(probabilities_arr)    # prevadime do listu
+    probabilities_arr = pravd - min(pravd)  # vycitame nejmensi
+    if not np.mean(arr) == min(arr):
+        probabilities_arr = probabilities_arr / max(probabilities_arr)   # pak vydelime nejvetsim
+        probabilities_arr = np.round(probabilities_arr, 4) #zaokruhlovani
+        probabilities_list = np.ndarray.tolist(probabilities_arr)    # prevadime do listu
+
 
     return probabilities_list
 
