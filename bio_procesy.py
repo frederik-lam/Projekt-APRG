@@ -52,7 +52,7 @@ def breed(parent1, parent2, chiasma):
     :param chiasma: miesto prekrizenia
     :return offspring:  potomok rodicov
     """
-    start = parent1[0:chiasma]  # vynechanie 0 prvku aby sa nezmenilo start city
+    start = parent1[0:chiasma]
     tail = [gen for gen in parent2 if gen not in start]
     offspring = start + tail
     return offspring
@@ -78,7 +78,7 @@ def crossingover(generace, probs, elite):  # [1,2,4,6,3,5]
         help_prob.remove(prob_parent1)  # osetrenie aby nebol 2-krat vybraty ten isty rodic
         [parent2, pprob_parent2] = selection(help_gen, help_prob)
 
-        miesto_krizenia = rnd.randint(int(gen_len / 3), int(2 * gen_len / 3))
+        miesto_krizenia = rnd.randint(int(len(parent1) / 3), int(2 * len(parent1) / 3))
         # vybratie nahodneho miesta krizenia, usudil som ze najlepsie bude ak to bude niekde medzi 1/3 a 2/3 dlzky
 
         # Rozhodnutie ci bude do novej generacie pridany 1. alebo 2.potomok

@@ -9,7 +9,7 @@ def file_read():
     :return: Matice hodnoceni delek cest mezi mesty, pocet mest
     """
     formaty = ["csv", "xls", "xlsx"]
-    nazev = "data_vzdalenosti.csv"
+    nazev = "data_vzdalenosti1.csv"
     # nazev = input("Napiste nazev souboru bez uvazovok: ")
     soubor = nazev.split('.')
 
