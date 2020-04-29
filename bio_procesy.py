@@ -28,16 +28,16 @@ def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
 def selection(generation, probabilities):
     """
     Na zakladě pravděpodobnosti určuje kdo projde do další delka_generace.
-    :param probabilities:
-    :param generation:
+    :param probabilities: Pravdepodobnost vyberu
+    :param generation: Generace, z ktorej vyberame rodica
     :return selected_breeder: Jedinec, ktory bude mat sancu sa krizit
     """
     selected_parent = []
     prob_of_parent = []
-    while not selected_parent:
-        var = round(rnd.random(), 4)  # rand float od 0 do 1
-        picked_individual_indx = rnd.randint(0, len(generation)-1)  # nahodne vybranie jedinca
-        if probabilities[picked_individual_indx] - var < 0:
+    while not selected_parent:  # cyklus prebieha pokial nie je vybraty 1 rodic
+        var = round(rnd.random(), 4)  # nahodna hodnota od 0 do 1, sluzi pre uprednostnenie lepsich jedincov
+        picked_individual_indx = rnd.randint(0, len(generation)-1)  # nahodne vybranie jedinca z generacie
+        if probabilities[picked_individual_indx] - var < 0:  # lepsi jedinci maju hodnotu blizsiu 0, preto budu < 0
             selected_parent = generation[picked_individual_indx]
             prob_of_parent = probabilities[picked_individual_indx]
 
@@ -81,7 +81,7 @@ def crossingover(generace, probs, elite):  # [1,2,4,6,3,5]
         miesto_krizenia = rnd.randint(int(len(parent1) / 3), int(2 * len(parent1) / 3))
         # vybratie nahodneho miesta krizenia, usudil som ze najlepsie bude ak to bude niekde medzi 1/3 a 2/3 dlzky
 
-        # Rozhodnutie ci bude do novej generacie pridany 1. alebo 2.potomok
+        # Rozhodnutie ci bude do novej generacie pridany 1. alebo 2.potomok (lisia sa poradim zaciatku a konca)
         a = rnd.random()  # nahodne vybratie cisla
         if a < 0.5:
             offspring1 = breed(parent1, parent2, miesto_krizenia)  # vytvorenie prveho potomka
