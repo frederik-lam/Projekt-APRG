@@ -3,26 +3,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def file_read():
+def file_read(nazev):
     """
     Nacteni csv souboru s daty, overovani spravneho formatu, vytvoreni matice(array)
     :return: Matice hodnoceni delek cest mezi mesty, pocet mest
     """
     formaty = ["csv", "xls", "xlsx"]
-    nazev = "data_vzdalenosti.csv"
-    # nazev = input("Napiste nazev souboru bez uvazovok: ")
     soubor = nazev.split('.')
 
     if len(soubor) >= 2:
         file_format = soubor[-1].lower()
         if file_format not in formaty:
-            raise ValueError("Spatne zadany format souboru")
+            raise ValueError("Nemame tento format souboru")
     else:
         print("Napiste jmeno souboru s pozadovanym formatem")
         file_read()
 
     new_list = []
-
     with open(nazev, newline="") as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=";", quotechar="|")
         for i in csv_reader:
@@ -71,24 +68,10 @@ def qual_to_prob(kvality):
     :param kvality:
     :return:
     """
-    pravd = []
+
     arr = np.array(kvality)
-    max_cislo = max(arr)
 
-    if max_cislo < 10:
-        pravd = arr / 10
-    elif max_cislo < 100:
-        pravd = arr / 100
-    elif max_cislo < 1000:
-        pravd = arr / 1000
-    elif max_cislo < 10000:
-        pravd = arr / 10000
-    elif max_cislo < 100000:
-        pravd = arr / 100000
-    elif max_cislo < 1000000:
-        pravd = arr / 1000000
-
-    probabilities_arr = pravd - min(pravd)    # vycitame nejmensi
+    probabilities_arr = arr - min(arr)    # vycitame nejmensi
     if not np.mean(probabilities_arr) == min(probabilities_arr):
         probabilities_arr = np.around(probabilities_arr / max(probabilities_arr), 4)    # pak vydelime nejvetsim
 
