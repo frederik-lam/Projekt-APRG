@@ -3,12 +3,13 @@ import bio_procesy as bp
 
 
 def main():
-    nazev = str(input("Napiste nazev souboru bez uvazovok(priklad: data.csv ): "))
-    [matrix, num_of_cities] = rf.file_read(nazev)
-    num_of_individuals =  int(input("Zadejte mnozstvi potřebných jedincu v generace (priklad: 60 ): "))
-    start_city = int(input("Zadejte pocatecni město (priklad: 5 ): "))
+    [matrix, num_of_cities] = rf.file_read()
+    num_of_individuals = int(input("Zadejte množství potřebných jedincu v generaci: "))
+    start_city = int(input("Zadajte startovacie mesto: "))
+    if start_city not in range(1,num_of_cities+1):
+        raise ValueError("Zadajte štartovacie mesto v rozsahu počtu miest!")
     generation = bp.create_generation(num_of_cities, num_of_individuals, start_city)
-    iteration_max = int(input("Zadejte maximalni pocet iteraci(priklad: 500 ): "))
+    iteration_max = int(input("Zadajte počet iterácii: ")) # maximalny pocet iteracii
     actual_iteration = 0
     best_scores = []  # hodnoty najlepsich jedincov pre neskorsie vykreslenie do grafu
     best_individuals = []  # najlepsi jedinci
@@ -22,10 +23,8 @@ def main():
         mutated_generation = bp.mutation(crossed_generation)
         generation = mutated_generation.copy()
         actual_iteration += 1
-    #print("Seznam nejlepsich jedincu v kazde generace: ",best_individuals)
-    #print("Seznam nejlepsich score v kazde generace",best_scores)
-    print("Nejlepsi zjisteny jedinec: ", best_individual)
-    print("A jeho skore: ", best_score)
+    # print(best_individuals)
+    print(best_scores)  # hodnoty najlepsich jedincov v generacii
     rf.quality_plot(best_scores)
 
 

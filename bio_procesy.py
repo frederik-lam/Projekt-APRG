@@ -1,4 +1,5 @@
 import random as rnd
+# import numpy as np
 
 
 def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
@@ -24,21 +25,21 @@ def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
     return generace
 
 
-def selection(generation, probs):
+def selection(generation, probabilities):
     """
-    Na zakladě pravděpodobnosti vybere jedince
-    :param probs:
-    :param generation:
+    Na zakladě pravděpodobnosti určuje kdo projde do další delka_generace.
+    :param probabilities: Pravdepodobnost vyberu
+    :param generation: Generace, z ktorej vyberame rodica
     :return selected_breeder: Jedinec, ktory bude mat sancu sa krizit
     """
     selected_parent = []
     prob_of_parent = []
-    while not selected_parent:
-        var = round(rnd.random(), 4)  # rand float od 0 do 1
-        picked_individual_indx = rnd.randint(0, len(generation)-1)  # nahodne vybranie jedinca
-        if probs[picked_individual_indx] - var < 0:
+    while not selected_parent:  # cyklus prebieha pokial nie je vybraty 1 rodic
+        var = round(rnd.random(), 4)  # nahodna hodnota od 0 do 1, sluzi pre uprednostnenie lepsich jedincov
+        picked_individual_indx = rnd.randint(0, len(generation)-1)  # nahodne vybranie jedinca z generacie
+        if probabilities[picked_individual_indx] - var < 0:  # lepsi jedinci maju hodnotu blizsiu 0, preto budu < 0
             selected_parent = generation[picked_individual_indx]
-            prob_of_parent = probs[picked_individual_indx]
+            prob_of_parent = probabilities[picked_individual_indx]
 
     return selected_parent, prob_of_parent
 
@@ -51,7 +52,7 @@ def breed(parent1, parent2, chiasma):
     :param chiasma: miesto prekrizenia
     :return offspring:  potomok rodicov
     """
-    start = parent1[0:chiasma]  # vynechanie 0 prvku aby sa nezmenilo start city
+    start = parent1[0:chiasma]
     tail = [gen for gen in parent2 if gen not in start]
     offspring = start + tail
     return offspring
@@ -59,7 +60,7 @@ def breed(parent1, parent2, chiasma):
 
 def crossingover(generace, probs, elite):  # [1,2,4,6,3,5]
     """
-    Náhodně promíchání části řetezce mezi jedincy
+    Náhodně promíchání části řetezce
     :param generace: Seznam jedincu
     :param probs: Seznam pravděpodobnosti
     :param elite: Najlepší jedinec z predchádzajúcej generácie
@@ -75,12 +76,12 @@ def crossingover(generace, probs, elite):  # [1,2,4,6,3,5]
         [parent1, prob_parent1] = selection(help_gen, help_prob)  # vybratie rodicov, ktory budu vstupovat do krizenia
         help_gen.remove(parent1)
         help_prob.remove(prob_parent1)  # osetrenie aby nebol 2-krat vybraty ten isty rodic
-        [parent2, prob_parent2] = selection(help_gen, help_prob)
+        [parent2, pprob_parent2] = selection(help_gen, help_prob)
 
         miesto_krizenia = rnd.randint(int(len(parent1) / 3), int(2 * len(parent1) / 3))
         # vybratie nahodneho miesta krizenia, usudil som ze najlepsie bude ak to bude niekde medzi 1/3 a 2/3 dlzky
 
-        # Rozhodnutie ci bude do novej generacie pridany 1. alebo 2.potomok
+        # Rozhodnutie ci bude do novej generacie pridany 1. alebo 2.potomok (lisia sa poradim zaciatku a konca)
         a = rnd.random()  # nahodne vybratie cisla
         if a < 0.5:
             offspring1 = breed(parent1, parent2, miesto_krizenia)  # vytvorenie prveho potomka
@@ -91,9 +92,11 @@ def crossingover(generace, probs, elite):  # [1,2,4,6,3,5]
     return new_generation
 
 
-def mutation(generace):
+def mutation(generace):  # [1,2,4,6,3,5]
     """
-    Nahodne prohozeni dvou cisel v posloupnosti jedincu..
+    Nahodne prohozeni dvou cisel v posloupnosti jedincu.
+    Dodat/rozšířit:
+    -Vstupem je taky pravděpodobnosti prošle do další delka_generace.
     :param generace: Generacia jedincov, ktora bude mutovana
     :return: mutovana_generace: Generacia po mutacii
     """
