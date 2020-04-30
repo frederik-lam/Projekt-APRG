@@ -3,13 +3,14 @@ import bio_procesy as bp
 
 
 def main():
-    [matrix, num_of_cities] = rf.file_read()
-    num_of_individuals = int(input("Zadejte množství potřebných jedincu v generaci: "))
-    start_city = int(input("Zadajte startovacie mesto: "))
+    nazev = input("Napiste nazev souboru bez uvazovok (priklad: data.csv) : ")
+    [matrix, num_of_cities] = rf.file_read(nazev)
+    num_of_individuals = int(input("Zadejte množství potřebných jedincu v generaci (priklad: 60): "))
+    start_city = int(input("Zadajte startovacie mesto (priklad: 1): "))
     if start_city not in range(1,num_of_cities+1):
         raise ValueError("Zadajte štartovacie mesto v rozsahu počtu miest!")
     generation = bp.create_generation(num_of_cities, num_of_individuals, start_city)
-    iteration_max = int(input("Zadajte počet iterácii: ")) # maximalny pocet iteracii
+    iteration_max = int(input("Zadajte počet iterácii (priklad: 500): ")) # maximalny pocet iteracii
     actual_iteration = 0
     best_scores = []  # hodnoty najlepsich jedincov pre neskorsie vykreslenie do grafu
     best_individuals = []  # najlepsi jedinci
@@ -24,7 +25,9 @@ def main():
         generation = mutated_generation.copy()
         actual_iteration += 1
     # print(best_individuals)
-    print(best_scores)  # hodnoty najlepsich jedincov v generacii
+    print("Hodnoty najlepsich jedincov v generacii",best_scores)
+    print("Nejlepsi jedinec: ",best_individual)
+    print("A jeho skore: ", best_score)
     rf.quality_plot(best_scores)
 
 

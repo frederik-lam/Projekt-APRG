@@ -1,5 +1,4 @@
 import random as rnd
-# import numpy as np
 
 
 def create_generation(pocet_mest, mnozstvi_jedincu, start_city):
